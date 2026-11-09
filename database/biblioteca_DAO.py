@@ -10,3 +10,17 @@ class BibliotecaDAO:
     def __init__(self):
         pass
 
+    def read_libraries_from_db(self):
+        cnx = DBConnect.get_connection()
+        if cnx is not None:
+            print("Connection established")
+            query = "SELECT * FROM biblioteca"
+            cursor = cnx.cursor()
+            cursor.execute(query)
+            result = []
+            for row in cursor:
+                biblioteche = Biblioteca(*row)
+                result.append(biblioteche)
+            cursor.close()
+            cnx.close()
+            return result

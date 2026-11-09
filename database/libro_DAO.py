@@ -11,8 +11,7 @@ class LibroDAO:
         pass
 
     def read_books_from_db(self):
-        db = DBConnect()
-        cnx = db.get_connection()
+        cnx = DBConnect.get_connection()
         if cnx is not None:
             print("Connection established")
             query = "SELECT * FROM libro"
@@ -27,11 +26,10 @@ class LibroDAO:
             return result
 
     def read_books_in_libraries_from_db(self, biblioteca):
-        db = DBConnect()
-        cnx = db.get_connection()
+        cnx = DBConnect.get_connection()
         if cnx is not None:
             print("Connection established")
-            query = f"SELECT l.titolo FROM biblioteca as b, libro as l WHERE b.id=l.id_biblioteca AND b.id={biblioteca}"
+            query = f"SELECT l.* FROM biblioteca as b, libro as l WHERE b.id=l.id_biblioteca AND b.id={biblioteca}"
             cursor = cnx.cursor()
             cursor.execute(query)
             result = []
@@ -43,11 +41,10 @@ class LibroDAO:
             return result
 
     def read_books_for_generes_from_db(self, genere):
-        db = DBConnect()
-        cnx = db.get_connection()
+        cnx = DBConnect.get_connection()
         if cnx is not None:
             print("Connection established")
-            query = f"SELECT titolo FROM libro WHERE genere={genere}"
+            query = f"SELECT * FROM libro WHERE genere='{genere}'"
             cursor = cnx.cursor()
             cursor.execute(query)
             result = []
@@ -58,18 +55,17 @@ class LibroDAO:
             cnx.close()
             return result
 
-        def read_books_for_generes_in_libraries_from_db(self, biblioteca, genere):
-            db = DBConnect()
-            cnx = db.get_connection()
-            if cnx is not None:
-                print("Connection established")
-                query = f"SELECT l.titolo FROM biblioteca as b, libro as l WHERE b.id=l.id_biblioteca AND b.id={biblioteca} AND l.genere={genere}"
-                cursor = cnx.cursor()
-                cursor.execute(query)
-                result = []
-                for row in cursor:
-                    libri = Libro(*row)
-                    result.append(libri)
-                cursor.close()
-                cnx.close()
-                return result
+    def read_books_for_generes_in_libraries_from_db(self, biblioteca, genere):
+        cnx = DBConnect.get_connection()
+        if cnx is not None:
+            print("Connection established")
+            query = f"SELECT l.* FROM biblioteca as b, libro as l WHERE b.id=l.id_biblioteca AND b.id={biblioteca} AND l.genere='{genere}'"
+            cursor = cnx.cursor()
+            cursor.execute(query)
+            result = []
+            for row in cursor:
+                libri = Libro(*row)
+                result.append(libri)
+            cursor.close()
+            cnx.close()
+            return result
